@@ -1,2 +1,4 @@
 node_modules
 .env
+docker-archive.tar.gz
+create-docker-archive.js
