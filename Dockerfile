@@ -1,5 +1,4 @@
-FROM node:12-alpine
-WORKDIR /testing-do
+FROM vicradon/ubuntu-node:latest
 COPY . .
-RUN npm install --production
-CMD ["node", "index.js"]
+RUN npm i -g nodemon && npm i
+
