@@ -1,21 +1,37 @@
-const express = require("express");
+import express from "express";
+import path from "path";
+import imageUploadRouter from "./routes/image-upload.js";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
-require("dotenv").config();
 
-app.get("/", (req, res) => {
-  res.send("<h1>Hi there, welcome to your app</h1>");
-});
+// view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
 
 app.use(express.json());
-app.post("/comment", (req, res) => {
-  res.send(req.body);
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use("/", imageUploadRouter);
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
-const ymlParser = express.raw({ type: "application/yml" });
+// error handler
+app.use((err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
-app.post("/geek-comment", ymlParser, (req, res) => {
-  console.log(req.body);
-  res.send(req.body);
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
 });
 
 app.listen(process.env.PORT, () =>
